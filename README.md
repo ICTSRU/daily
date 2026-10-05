@@ -1,4 +1,4 @@
-# ICTD Daily Check Report — v2.3
+# ICTD Daily Check Report — v2.6
 
 A daily health-check form, dashboard and printable report for SRU ICTD units, saved in Google Sheets.
 
@@ -30,6 +30,17 @@ Web App URL (hardcoded in `index.html` as `GAS_URL`):
 5. The bar turns green: **Connected to Google Sheet**.
 
 > If you change `Code.gs` later, go to **Deploy → Manage deployments → Edit → New version**. This keeps the same URL.
+
+## Upgrade to v2.5 (screenshots): update the Apps Script once
+1. Open the Sheet, go to **Extensions → Apps Script**, replace the code with the new **`Code.gs`** and save.
+2. Run **`setup`** once and approve the new **Google Drive** permission. This creates the folder **ICTD Daily Check - Attachments** next to the Sheet.
+3. Go to **Deploy → Manage deployments → ✏️ Edit**, set **Version: New version**, and click **Deploy**. The Web App URL stays the same.
+4. The `Attachments` column is added to the Sheet automatically on the next save.
+
+## Screenshots (NSU)
+- Each image row starts as type **PRTG**, with the caption "Internet, STC, Mobily and KACST traffic (last 2 hours)".
+- Add an image in any of three ways: **Choose image**, **drag and drop** onto a row, or click a row and **paste with Ctrl+V** (for example, a Snipping Tool screenshot).
+- Images are saved in Drive under `ICTD Daily Check - Attachments/<date>/` and shared as view-only by link. They show as thumbnails on the dashboard card and full size in the Daily Report.
 
 ## Save and restore
 - **Save:** pick the day and unit, then **Save Daily Check**. Saving the same day again updates that row.

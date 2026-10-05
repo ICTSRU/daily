@@ -1,5 +1,30 @@
 # Changelog — ICTD Daily Check Report
 
+## v2.6 — 2026-10-05
+- **Get from Sheet** now glows and pulses, with a spinner and "Loading…", whenever the page is reading from the Google Sheet: changing the date or unit, clicking the button, or loading the page. The connection dot pulses too.
+- Fix: the "Restore a saved day" list could show another unit's name when the unit was changed while data was still loading. Out-of-date replies are now ignored, and the list shows "Loading saved reports for …" straight away.
+- Day-Date and Unit no longer get restored by the browser on reload (autocomplete off), which kept them out of sync with the loaded data.
+
+## v2.5 — 2026-10-05
+- **Screenshots / Images for NSU**, in the Daily Summary panel: add several images, each with a type (**PRTG** by default, plus Firewall, Wireless / WLC, Switch / Core, UC, Other) and a caption. The PRTG caption is filled in automatically.
+- Three ways to add an image: Choose image, drag and drop, or paste (Ctrl+V). Images over 1.5 MB are shrunk to at most 2000 px before upload.
+- Images are stored in Google Drive (`ICTD Daily Check - Attachments/<date>/`); the report row keeps the file IDs in a new **Attachments** column.
+- Dashboard card shows thumbnails; the Daily Report prints each image full width with its caption.
+- **Code.gs v2.5**: new `upload` action and Drive folder handling; `Attachments` added to the headers. Needs a one-time update and **New version** deployment (same URL).
+
+## v2.4 — 2026-10-05
+- New unit **NSU — Network and Security Unit** (owner Atef Elnadi), built from the unit's Daily Health Check Report email. 36 checks in 6 groups:
+  - Internet-WAN (5): STC, Mobily, KACST links, Site-to-Site VPN MOE, A10 - Published Servers
+  - Infrastructure (11): P1–P5 access switches, distribution switches P1-P3-P5 and P2-P4, distribution CPU, Core Nexus, UCS Chassis, Storage - EMC
+  - Wireless Network (9): WLC, SAC/FAC links, Student/Voice/Employee wireless, SAC/FAC/Campus APs (online counts in Notes)
+  - Wireless Clients (3): client counts at SAC, FAC and SRC-Student (University)
+  - UC (5): IP phones registration, SIP land lines, Cisco Jabber, UC contact center inside/outside
+  - Firewalls (2): FAC and SAC Forti firewalls
+- NSU uses the **Daily Summary** panel at the top (Main Tasks Today, Hot Issues Yesterday, Notes), the same as AAU.
+- "Atef Elnadi" added to the team list.
+- Dashboard cards show the saved time in local (Riyadh) time instead of UTC.
+- Dashboard, trend, service history and Daily Report now cover 3 units. No Sheet or Apps Script change needed (unit code `NSU`).
+
 ## v2.3 — 2026-10-05
 - Checklist: the **URL / Address** column is hidden in any group where no item has a URL. In DSSC that is Hosts and Physical Servers, Domains, Backup, Solutions and Quarantine Devices; Notes widens to use the space. Web Interface Access and all AAU groups keep the column.
 - Added `assets/` (hosted logos for the n8n reminder email).

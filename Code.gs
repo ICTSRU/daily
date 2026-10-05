@@ -1,6 +1,6 @@
 /**
  * ICTD Daily Check Report — Google Sheets backend (Apps Script Web App)
- * Version 1.6 · Sulaiman Al Rajhi University · ICTD
+ * Version 2.5 · Sulaiman Al Rajhi University · ICTD
  *
  * Sheet : "ICTD Daily Check Report - Data"
  * Tab   : "Daily"  (the first tab is renamed automatically on first run)
@@ -9,6 +9,8 @@
  * GET  <webapp-url>?date=YYYY-MM-DD -> reports for one day
  * POST <webapp-url>  body {action:'save',   row:{...}}  -> insert or update by Key (YYYY-MM-DD|UNIT)
  * POST <webapp-url>  body {action:'delete', key:'...'}  -> delete one report
+ * POST <webapp-url>  body {action:'upload', date, unit, name, mime, data(base64)}
+ *                    -> saves an image in Drive: "ICTD Daily Check - Attachments/<date>/" and returns {id, url}
  *
  * Deploy: Deploy > New deployment > Web app
  *         Execute as: Me   ·   Who has access: Anyone
@@ -17,7 +19,9 @@
 const SHEET_ID = '1BxNsw79z9XsyPBS6mC78TcsuQooyAzDpDkzLQcCu7lM';
 const TAB      = 'Daily';
 const HEADERS  = ['Key','Date','Unit','Status','CheckTime','Items','Normal','Minor','Major','Critical',
-                  'MainTasks','HotIssues','NotAvailable','Notes','MorningSupport','SubmittedBy','Timestamp'];
+                  'MainTasks','HotIssues','NotAvailable','Notes','MorningSupport','SubmittedBy','Timestamp','Attachments'];
+const ATT_FOLDER = 'ICTD Daily Check - Attachments';   // created next to the Sheet on first upload
+const MAX_UPLOAD_MB = 10;
 
 function getSheet_() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
@@ -75,6 +79,8 @@ function doPost(e) {
     const head = headers_(sh);
     const keys = sh.getLastRow() > 1 ? sh.getRange(2, 1, sh.getLastRow() - 1, 1).getDisplayValues().map(r => r[0]) : [];
 
+    if (body.action === 'upload') return json_(upload_(body));
+
     if (body.action === 'delete') {
       const i = keys.indexOf(String(body.key || ''));
       if (i === -1) return json_({ ok: false, error: 'Not found' });
@@ -96,8 +102,37 @@ function doPost(e) {
   }
 }
 
+/** Save one image (base64) into ATT_FOLDER/<date>/ and share it as view-only by link. */
+function upload_(b) {
+  if (!b.data) return { ok: false, error: 'No image data' };
+  const bytes = Utilities.base64Decode(b.data);
+  if (bytes.length > MAX_UPLOAD_MB * 1024 * 1024) return { ok: false, error: 'Image larger than ' + MAX_UPLOAD_MB + ' MB' };
+  const mime = /^image\//.test(b.mime || '') ? b.mime : 'image/png';
+  const name = String(b.name || ('screenshot-' + Date.now())).replace(/[\\/:*?"<>|]+/g, '-');
+  const day = String(b.date || Utilities.formatDate(new Date(), 'Asia/Riyadh', 'yyyy-MM-dd')).slice(0, 10);
+  const folder = subFolder_(rootFolder_(), day);
+  const file = folder.createFile(Utilities.newBlob(bytes, mime, name));
+  file.setDescription('ICTD Daily Check · ' + (b.unit || '') + ' · ' + day);
+  try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); }
+  catch (e) { try { file.setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.VIEW); } catch (e2) {} }
+  return { ok: true, id: file.getId(), url: file.getUrl(), name: file.getName() };
+}
+
+function rootFolder_() {
+  const sheetFile = DriveApp.getFileById(SHEET_ID);
+  const parents = sheetFile.getParents();
+  const parent = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  const it = parent.getFoldersByName(ATT_FOLDER);
+  return it.hasNext() ? it.next() : parent.createFolder(ATT_FOLDER);
+}
+function subFolder_(root, name) {
+  const it = root.getFoldersByName(name);
+  return it.hasNext() ? it.next() : root.createFolder(name);
+}
+
 /** Run once from the editor (▶ Run > setup) to authorise the script and prepare the tab. */
 function setup() {
   const sh = getSheet_();
+  rootFolder_();   // also asks for Drive permission and creates the attachments folder
   Logger.log('Ready: ' + sh.getParent().getUrl() + ' · tab "' + sh.getName() + '" · ' + (sh.getLastRow() - 1) + ' saved reports');
 }

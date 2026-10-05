@@ -1,0 +1,338 @@
+{
+  "name": "ICTD Daily Check Report - API",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ictd-daily-submit",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "name": "Submit Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "ictd-daily-submit"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1BxNsw79z9XsyPBS6mC78TcsuQooyAzDpDkzLQcCu7lM",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Daily",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Key": "={{ $json.body.Key }}",
+            "Date": "={{ $json.body.Date }}",
+            "Unit": "={{ $json.body.Unit }}",
+            "Status": "={{ $json.body.Status }}",
+            "CheckTime": "={{ $json.body.CheckTime }}",
+            "Items": "={{ $json.body.Items }}",
+            "Normal": "={{ $json.body.Normal }}",
+            "Minor": "={{ $json.body.Minor }}",
+            "Major": "={{ $json.body.Major }}",
+            "Critical": "={{ $json.body.Critical }}",
+            "MainTasks": "={{ $json.body.MainTasks }}",
+            "HotIssues": "={{ $json.body.HotIssues }}",
+            "Notes": "={{ $json.body.Notes }}",
+            "MorningSupport": "={{ $json.body.MorningSupport }}",
+            "SubmittedBy": "={{ $json.body.SubmittedBy }}",
+            "Timestamp": "={{ $json.body.Timestamp }}",
+            "NotAvailable": "={{ $json.body.NotAvailable }}"
+          },
+          "matchingColumns": [
+            "Key"
+          ],
+          "schema": [
+            {
+              "id": "Key",
+              "displayName": "Key",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Unit",
+              "displayName": "Unit",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "CheckTime",
+              "displayName": "CheckTime",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Items",
+              "displayName": "Items",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Normal",
+              "displayName": "Normal",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Minor",
+              "displayName": "Minor",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Major",
+              "displayName": "Major",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Critical",
+              "displayName": "Critical",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "MainTasks",
+              "displayName": "MainTasks",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "HotIssues",
+              "displayName": "HotIssues",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "NotAvailable",
+              "displayName": "NotAvailable",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "MorningSupport",
+              "displayName": "MorningSupport",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "SubmittedBy",
+              "displayName": "SubmittedBy",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "display": true,
+              "required": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Upsert Row (Key)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VV5sKZMSCE2IKCRY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, key: $('Submit Webhook').item.json.body.Key } }}",
+        "options": {}
+      },
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "ictd-daily-data",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "name": "Data Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        220
+      ],
+      "webhookId": "ictd-daily-data"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1BxNsw79z9XsyPBS6mC78TcsuQooyAzDpDkzLQcCu7lM",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Daily",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read All Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        220
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VV5sKZMSCE2IKCRY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "name": "Respond Rows",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        220
+      ]
+    }
+  ],
+  "connections": {
+    "Submit Webhook": {
+      "main": [
+        [
+          {
+            "node": "Upsert Row (Key)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Row (Key)": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Webhook": {
+      "main": [
+        [
+          {
+            "node": "Read All Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read All Rows": {
+      "main": [
+        [
+          {
+            "node": "Respond Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

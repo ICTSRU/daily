@@ -1,4 +1,4 @@
-# ICTD Daily Check Report — v1.9
+# ICTD Daily Check Report — v2.3
 
 A daily health-check form, dashboard and printable report for SRU ICTD units, saved in Google Sheets.
 
@@ -9,6 +9,7 @@ A daily health-check form, dashboard and printable report for SRU ICTD units, sa
 | `Code.gs` | Google Apps Script backend: reads all days, saves (insert or update by Key) and deletes |
 | `sheet-headers.csv` | Header row of the Sheet (already applied) |
 | `n8n-workflow-ictd-daily-check.json` | Alternative backend, the same setup as the Weekly Report |
+| `assets/` | Logos used by the 08:15 reminder email (ictd-logo.png, sru-logo.png, itoc-logo.png) |
 | `CHANGELOG.md` | Version history |
 
 ## Google Sheet

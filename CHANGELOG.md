@@ -1,5 +1,19 @@
 # Changelog — ICTD Daily Check Report
 
+## v2.3 — 2026-10-05
+- Checklist: the **URL / Address** column is hidden in any group where no item has a URL. In DSSC that is Hosts and Physical Servers, Domains, Backup, Solutions and Quarantine Devices; Notes widens to use the space. Web Interface Access and all AAU groups keep the column.
+- Added `assets/` (hosted logos for the n8n reminder email).
+
+## v2.2 — 2026-10-05
+- Renamed the DSSC unit to **DSSC — Digital Services and Support Center** everywhere it appears. Unit code `DSSC` is unchanged, so saved Sheet rows still match.
+
+## v2.1 — 2026-10-05
+- Renamed the AAU unit to **AAU — Application and Automation Unit** (unit picker, dashboard cards, trend, history, Daily Report, messages). Unit code `AAU` is unchanged, so saved Sheet rows still match.
+
+## v2.0 — 2026-10-05
+- The **Daily Summary & Team** panel moved to the top of the form, directly under Day-Date / Unit / Check Time and Restore a saved day, above the checklist.
+- Order is now: Day & unit → Daily Summary & Team → Overall status → Checklist → Submitted By → Save.
+
 ## v1.9 — 2026-10-05
 - Main Tasks Today, Hot Issues Yesterday, Notes, Events / 7 AM Morning Support and Team Members Not Available Today now sit on a separate light-blue **Daily Summary & Team** panel (blue accent edge, white fields, blue buttons), so they stand apart from the checklist.
 

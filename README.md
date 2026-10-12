@@ -1,50 +1,56 @@
-# ICTD Daily Check Report — v2.6
+# ICTD Daily Check Report — v3.3 (SRU Secure Access Kit v1.4)
 
-A daily health-check form, dashboard and printable report for SRU ICTD units, saved in Google Sheets.
+The Daily Check is now a **secure platform**. Only Sulaiman Al Rajhi University Google accounts (@sr.edu.sa) on the access list can open it, and every sign-in is logged.
 
-## Files
-| File | Purpose |
-|---|---|
-| `index.html` | The app (Submit · Dashboard · Daily Report) |
-| `Code.gs` | Google Apps Script backend: reads all days, saves (insert or update by Key) and deletes |
-| `sheet-headers.csv` | Header row of the Sheet (already applied) |
-| `n8n-workflow-ictd-daily-check.json` | Alternative backend, the same setup as the Weekly Report |
-| `assets/` | Logos used by the 08:15 reminder email (ictd-logo.png, sru-logo.png, itoc-logo.png) |
-| `CHANGELOG.md` | Version history |
+```
+ictsru.github.io/daily/  →  Google sign-in (@sr.edu.sa)  →  Apps Script Web App (Daily Check app)
+ (branded ITOC landing)      (Google's own page)             (access list checked on every call)
+```
 
-## Google Sheet
-**ICTD Daily Check Report - Data**: https://docs.google.com/spreadsheets/d/1BxNsw79z9XsyPBS6mC78TcsuQooyAzDpDkzLQcCu7lM/edit
-One row per unit per day. `Key` = `YYYY-MM-DD|UNIT`.
+## Package
+| Folder / file | Goes to | Purpose |
+|---|---|---|
+| `apps-script/Code.gs` | Apps Script project of **ICTD Daily Check Report - Data** | Access control, access list, sign-in log, data API (`apiList`, `apiSave`, `apiDelete`, `apiUpload`) |
+| `apps-script/Index.html` | same project, HTML file **Index** | Page layout (Submit · Dashboard · Daily Report) |
+| `apps-script/AppStyles.html` | HTML file **AppStyles** | Page styles |
+| `apps-script/AppScript.html` | HTML file **AppScript** | Page logic |
+| `apps-script/Logos.html`, `Denied.html` | same project, HTML files **Logos**, **Denied** | Kit logos and the "access restricted" page |
+| `github-landing/` | GitHub repo **ictsru/daily** (replaces the old `index.html`) | Branded sign-in page; `#dashboard` and `#report` open those tabs |
+| `n8n/ictd-daily-check-reminder.workflow.json` | n8n | 08:15 reminder v1.4: reads the Sheet directly, because the Web App is no longer public |
 
-## Connection
-Web App URL (hardcoded in `index.html` as `GAS_URL`):
-`https://script.google.com/macros/s/AKfycbwoT0b3mQyrZ0lnNw3kVETG5kxdZexUW6Q0RnQPdX2oKBMkkQCdK4-P6pRYeq-9Xq5TNw/exec`
+## Go-live (about 15 minutes)
+1. **Apps Script:** open the Sheet → **Extensions ▸ Apps Script**.
+   - Replace `Code.gs` with the new one.
+   - Add five HTML files (**＋ ▸ HTML**) named exactly `Index`, `AppStyles`, `AppScript`, `Logos` and `Denied`. Each one except Logos ends with an `<!-- END OF … -->` line; check it is there after pasting, and paste the content of each.
+2. **Access list:** in `Code.gs`, check `DEFAULT_ALLOWED` and remove anyone who doesn't need the Daily Check.
+3. **Run `setup`** (▶). It now checks each step separately and prints ✓ / ✗ per step in the Execution log. If one step fails, the others still finish. Run `setupDrive` to retry only the Drive step, or paste a folder ID into `ATT_FOLDER_ID`. Approve the permissions: Sheets, **Drive** and your e-mail address. This creates the tabs **AllowedUsers** and **AccessLog**, plus the attachments folder. It also fixes the earlier Drive upload error.
+4. **Deploy:** go to **Deploy ▸ Manage deployments ▸ ✏️ Edit**.
+   - Set **Version: New version**, **Execute as: Me**, and **Who has access: Anyone within Sulaiman Al Rajhi University**, then click **Deploy**.
+   - The URL stays the same, and it is already set in `github-landing/index.html`.
+   - If the access setting can't be changed there, make a **New deployment** with those settings instead. Paste its URL into `WEB_APP_URL` in the landing page, then **Archive** the old deployment.
+   - The old "Anyone" deployment must not stay active.
+5. **GitHub `ictsru/daily`:** replace `index.html` with `github-landing/index.html`, upload `assets/` (the reminder e-mail uses the same logo names) and `.nojekyll`.
+6. **n8n:** import `n8n/ictd-daily-check-reminder.workflow.json`, or in the existing workflow:
+   - add a **Google Sheets ▸ Get row(s)** node named `Read Daily tab` (Sheet ID `1BxNsw79z9XsyPBS6mC78TcsuQooyAzDpDkzLQcCu7lM`, tab `Daily`, *Always Output Data* on) between the triggers and **Build Reminder Email**
+   - paste `n8n/build-email.js` into **Build Reminder Email**
+   - put the owner e-mails back
+7. **Test:**
+   - your account ✓
+   - Incognito → Google sign-in ✓
+   - a personal Gmail account → refused ✓
+   - an @sr.edu.sa account not on the list → "الوصول مقيّد" ✓
+   - upload an NSU screenshot ✓
 
-## Original setup steps (already done)
-1. Open the Sheet, then go to **Extensions → Apps Script**. Delete the sample code, paste **`Code.gs`** and save.
-2. Choose **`setup`** in the function list, click **Run**, and approve access. This renames the tab to `Daily`.
-3. Go to **Deploy → New deployment → Web app**. Set **Execute as: Me** and **Who has access: Anyone**. Click **Deploy** and copy the URL that ends in `/exec`.
-4. Do one of the following:
-   - **For the whole team:** paste the URL into `const GAS_URL = '...'` in `index.html` and publish the folder to GitHub Pages.
-   - **For one browser:** click **Connect** in the green/amber bar at the top of the page and paste the URL.
-5. The bar turns green: **Connected to Google Sheet**.
+## Managing access
+- **AllowedUsers** tab: add a row to grant access, untick `active` to suspend, delete the row to remove. Changes apply within 2 minutes.
+- `OWNER_EMAILS` (m.elmahdy@sr.edu.sa) is always allowed.
+- **AccessLog** tab: e-mail, date, time and day for every sign-in (repeat visits within 30 minutes count once). Refused and not-listed attempts are logged too.
+- Sheet menu **ICTD Daily Check Report** offers a 30-day summary and a purge of old entries.
 
-> If you change `Code.gs` later, go to **Deploy → Manage deployments → Edit → New version**. This keeps the same URL.
+## What changed for users
+- They open `ictsru.github.io/daily/` and sign in with their university account. The app opens with their e-mail shown in the header.
+- **Submitted By** defaults to the signed-in person (where the account is mapped to a team name). Every save also records the account in the new **SavedBy** column.
+- Screenshots are shared **inside sr.edu.sa only**, no longer with anyone who has the link.
 
-## Upgrade to v2.5 (screenshots): update the Apps Script once
-1. Open the Sheet, go to **Extensions → Apps Script**, replace the code with the new **`Code.gs`** and save.
-2. Run **`setup`** once and approve the new **Google Drive** permission. This creates the folder **ICTD Daily Check - Attachments** next to the Sheet.
-3. Go to **Deploy → Manage deployments → ✏️ Edit**, set **Version: New version**, and click **Deploy**. The Web App URL stays the same.
-4. The `Attachments` column is added to the Sheet automatically on the next save.
-
-## Screenshots (NSU)
-- Each image row starts as type **PRTG**, with the caption "Internet, STC, Mobily and KACST traffic (last 2 hours)".
-- Add an image in any of three ways: **Choose image**, **drag and drop** onto a row, or click a row and **paste with Ctrl+V** (for example, a Snipping Tool screenshot).
-- Images are saved in Drive under `ICTD Daily Check - Attachments/<date>/` and shared as view-only by link. They show as thumbnails on the dashboard card and full size in the Daily Report.
-
-## Save and restore
-- **Save:** pick the day and unit, then **Save Daily Check**. Saving the same day again updates that row.
-- **Get from Sheet:** pick a Day-Date and click **Get from Sheet** (changing the date also loads that day's latest data from the Sheet).
-- **Restore any day:** use **Restore a saved day** on the Submit tab, pick a date in the Submit or Dashboard tab, or click **Open / edit** on a dashboard card.
-- **Copy to today:** opens a past day's report as a starting point for today.
-- **Delete entry:** removes that day's row from the Sheet.
+## Updating later
+Deploy ▸ Manage deployments ▸ ✏️ ▸ Version: New version. The URL stays the same.

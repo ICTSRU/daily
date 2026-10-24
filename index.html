@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="version" content="3.0">
+<meta name="version" content="3.6">
 <title>الدخول إلى تقرير الفحص اليومي | SRU</title>
 <link rel="icon" type="image/png" href="assets/itoc-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +15,8 @@
     WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwoT0b3mQyrZ0lnNw3kVETG5kxdZexUW6Q0RnQPdX2oKBMkkQCdK4-P6pRYeq-9Xq5TNw/exec",  // Apps Script Web App URL (…/exec)
     TITLE:       "الدخول إلى تقرير الفحص اليومي",   // main heading
     SUBTITLE:    "ICTD Daily Check Report — متاح لفريق الإدارة التنفيذية للاتصالات وتقنية المعلومات فقط",
-    LOGO:        "assets/itoc-logo.png",             // platform logo (or keep ITOC)
-    VERSION:     "3.0",
+    LOGO:        "https://ictsru.github.io/brand/logos/itoc-logo.png",             // platform logo (or keep ITOC)
+    VERSION:     "3.6",
     KEY:         "daily"                             // short unique id (used for "skip next time")
   };
   /* ▲▲▲ CONFIG ▲▲▲ */
@@ -42,12 +42,14 @@ html,body{height:100%}
 body{margin:0;display:flex;flex-direction:column;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Cairo",Tahoma,Arial,sans-serif;line-height:1.6}
 .container{max-width:1100px;margin:0 auto;padding:0 16px;width:100%}
 
-/* Official header band: SRU right, ICTD left */
-.band{background:#fff;border-bottom:1px solid var(--border)}
-.band .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px;padding-bottom:10px}
-.band img{display:block;height:54px;width:auto;max-width:44vw;object-fit:contain}
-.band .ictd{height:60px}
-.bar{height:6px;background:linear-gradient(90deg,var(--purple-dark),var(--purple) 60%,var(--blue))}
+/* v3.6 — SRU Brand Kit v1.0: brand bar, network header band and footer come from ictsru.github.io/brand (linked below).
+   The colours here are only the fallback if the kit can't be reached. */
+.sru-brandbar,.hero,.sru-footer,.copy{flex:none} /* the page is a full-height flex column: keep the kit bands from shrinking */
+.hero{background:#501e8c linear-gradient(110deg,#501e8c 0%,#4a1f8a 50%,#2b3f9e 100%);color:#fff;border-bottom:6px solid var(--blue)}
+.hero .container{padding-top:18px;padding-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hero .t{margin:0;font-size:1.25rem;font-weight:800;line-height:1.4}
+.hero .s{margin:0;opacity:.9;font-size:.9rem}
+.hero .ver{direction:ltr;unicode-bidi:isolate;background:#fff;color:var(--purple-dark);border-radius:4px;padding:2px 10px;font-weight:800;font-size:.85rem;font-family:Arial,sans-serif}
 
 main{flex:1;display:grid;place-items:center;padding:32px 16px}
 .card{width:100%;max-width:460px;background:#fff;border:1px solid var(--border);border-top:4px solid var(--purple);border-radius:var(--radius);padding:28px 26px 22px;box-shadow:0 10px 30px rgba(58,20,100,.08);text-align:center}
@@ -74,31 +76,39 @@ h1{margin:6px 0 4px;font-size:1.45rem;color:var(--purple-dark);line-height:1.35}
 
 .en{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);direction:ltr;font-size:.8rem;color:#8a7c9c;font-family:Arial,sans-serif}
 
-footer{background:var(--purple-dark);color:#e6dcf5;font-size:.82rem}
-footer .container{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between;padding-top:12px;padding-bottom:12px}
-footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);padding:0 8px;border-radius:3px}
+.sru-footer{background:#3a1464;color:#fff}
+.copy{background:#2e2a80;color:#e6dcf5;font-size:.8rem}
+.copy .container{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between;padding-top:8px;padding-bottom:8px}
+.copy .v{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);padding:0 8px;border-radius:3px}
 
 @media (max-width:520px){
-  .band img{height:38px}.band .ictd{height:44px}
+  .hero .t{font-size:1.1rem}
   .card{padding:22px 18px 18px}
   .card .logo{height:62px}
   h1{font-size:1.25rem}
 }
 </style>
+<link rel="stylesheet" href="https://ictsru.github.io/brand/css/sru-shell.css">
+<link rel="stylesheet" href="https://ictsru.github.io/brand/css/sru-tech-bg.css">
 </head>
 <body>
 
-<div class="band">
-  <div class="container">
-    <img src="assets/sru-logo.png" alt="جامعة سليمان الراجحي | Sulaiman Alrajhi University">
-    <img class="ictd" src="assets/ictd-logo.png" alt="الإدارة التنفيذية للاتصالات وتقنية المعلومات">
+<div class="sru-brandbar"><div class="in">
+  <img src="https://ictsru.github.io/brand/logos/sru-logo.png" data-local="assets/sru-logo.png" alt="جامعة سليمان الراجحي | Sulaiman Alrajhi University">
+  <img src="https://ictsru.github.io/brand/logos/ictd-logo.png" data-local="assets/ictd-logo.png" alt="الإدارة التنفيذية للاتصالات وتقنية المعلومات">
+</div></div>
+
+<section class="hero sru-tech-bg"><div class="container">
+  <div>
+    <p class="t">تقرير الفحص اليومي — <span dir="ltr">ICTD Daily Check Report</span></p>
+    <p class="s">مركز العمليات التقنية ITOC — الإدارة التنفيذية للاتصالات وتقنية المعلومات</p>
   </div>
-</div>
-<div class="bar"></div>
+  <span class="ver" id="heroVer"></span>
+</div></section>
 
 <main>
   <div class="card">
-    <img class="logo" id="appLogo" src="assets/itoc-logo.png" alt="">
+    <img class="logo" id="appLogo" src="assets/itoc-logo.png" data-local="assets/itoc-logo.png" alt="">
     <h1 id="appTitle"></h1>
     <p class="sub" id="appSub"></p>
 
@@ -126,12 +136,14 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
   </div>
 </main>
 
-<footer>
-  <div class="container">
-    <div>مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026</div>
-    <div>الإصدار <span class="ver" dir="ltr" id="appVer"></span></div>
-  </div>
-</footer>
+<footer class="sru-footer sru-tech-bg-dark"><div class="in">
+  <div class="sru-support"><b>For Support:</b> Dial <span class="star" aria-label="star">*</span> <span class="or">or</span> Send email to: <a href="mailto:servicedesk@sr.edu.sa">servicedesk@sr.edu.sa</a></div>
+  <a class="sru-itoc" href="https://ictsru.github.io/ITOC/#forms" target="_blank" rel="noopener" title="ITOC — IT Operations Center"><img src="https://ictsru.github.io/brand/logos/itoc-logo.png" data-local="assets/itoc-logo.png" alt="ITOC — IT Operations Center"></a>
+</div></footer>
+<div class="copy"><div class="container">
+  <div>مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026</div>
+  <div>الإصدار <span class="v" dir="ltr" id="appVer"></span></div>
+</div></div>
 
 <script>
   var go = document.getElementById("go"), skip = document.getElementById("skip");
@@ -141,6 +153,12 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
   document.getElementById("appSub").textContent = CONFIG.SUBTITLE;
   document.getElementById("appLogo").src = CONFIG.LOGO;
   document.getElementById("appVer").textContent = "v" + CONFIG.VERSION;
+  document.getElementById("heroVer").textContent = "v" + CONFIG.VERSION;
+  /* v3.6 — logos load from the SRU Brand Kit; if it can't be reached, use the copies in assets/ */
+  [].forEach.call(document.querySelectorAll("img[data-local]"), function (img) {
+    var use = function () { var l = img.getAttribute("data-local"); if (img.getAttribute("src") !== l) img.src = l; };
+    if (img.complete && !img.naturalWidth) use(); else img.addEventListener("error", use, { once: true });
+  });
   var SKIP_KEY = CONFIG.KEY + "_skip_intro";
   try { skip.checked = localStorage.getItem(SKIP_KEY) === "1"; } catch (e) {}
   skip.addEventListener("change", function () {
